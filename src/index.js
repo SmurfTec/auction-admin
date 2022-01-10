@@ -9,13 +9,23 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
+import { AuthProvider } from 'contexts/AuthContext';
+import { ToastContainer } from 'react-toastify';
 
 // ----------------------------------------------------------------------
+
+// * Styles Sheets for different packages ----
+import 'react-toastify/dist/ReactToastify.css';
+
+// * ---------------  //
 
 ReactDOM.render(
   <HelmetProvider>
     <BrowserRouter>
-      <App />
+      <AuthProvider>
+        <App />
+        <ToastContainer autoClose={4000} />
+      </AuthProvider>
     </BrowserRouter>
   </HelmetProvider>,
   document.getElementById('root')

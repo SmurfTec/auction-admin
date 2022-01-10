@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
@@ -13,16 +13,19 @@ import {
   TextField,
   IconButton,
   InputAdornment,
-  FormControlLabel
+  FormControlLabel,
+  Box
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-
+import { API_BASE_URL, handleCatch } from 'utils/makeReq';
+import { AuthContext } from 'contexts/AuthContext';
+import axios from 'axios';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-
+  const { signInUser } = useContext(AuthContext);
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
     password: Yup.string().required('Password is required')
@@ -31,12 +34,26 @@ export default function LoginForm() {
   const formik = useFormik({
     initialValues: {
       email: '',
-      password: '',
-      remember: true
+      password: ''
     },
     validationSchema: LoginSchema,
     onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+      console.log(`'formik.va'`, formik.values);
+      formik.setSubmitting(true);
+      (async () => {
+        try {
+          const res = await axios.post(`${API_BASE_URL}/auth/login/admin`, {
+            email: formik.values.email,
+            password: formik.values.password
+          });
+
+          signInUser(res.data.token, res.data.user);
+        } catch (err) {
+          handleCatch(err);
+        } finally {
+          formik.setSubmitting(false);
+        }
+      })();
     }
   });
 
@@ -80,17 +97,7 @@ export default function LoginForm() {
           />
         </Stack>
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <FormControlLabel
-            control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
-            label="Remember me"
-          />
-
-          <Link component={RouterLink} variant="subtitle2" to="#">
-            Forgot password?
-          </Link>
-        </Stack>
-
+        <Box my={2} />
         <LoadingButton
           fullWidth
           size="large"
