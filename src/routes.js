@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------
-import { Navigate, Route, Routes, useRoutes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import React, { useContext } from 'react';
 import Loader from 'components/common/Loading';
@@ -9,12 +9,10 @@ const LazyDashboardLayout = React.lazy(() => import('./layouts/dashboard'));
 const LazyLogoOnlyLayout = React.lazy(() => import('./layouts/LogoOnlyLayout'));
 //
 const LazyLogin = React.lazy(() => import('./pages/Login'));
-const LazyRegister = React.lazy(() => import('./pages/Register'));
 const LazyDashboardApp = React.lazy(() => import('./pages/DashboardApp'));
 const LazyProducts = React.lazy(() => import('./pages/Products'));
 const LazyBlog = React.lazy(() => import('./pages/Blog'));
 const LazyUser = React.lazy(() => import('./pages/User'));
-const LazyNotFound = React.lazy(() => import('./pages/Page404'));
 
 export default function Router() {
   const { token, isLoggedin } = useContext(AuthContext);

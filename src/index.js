@@ -16,6 +16,8 @@ import { ToastContainer } from 'react-toastify';
 
 // * Styles Sheets for different packages ----
 import 'react-toastify/dist/ReactToastify.css';
+import { AuctionsProvider } from 'contexts/AuctionsContext';
+import { UsersProvider } from 'contexts/UsersContext';
 
 // * ---------------  //
 
@@ -23,7 +25,11 @@ ReactDOM.render(
   <HelmetProvider>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <AuctionsProvider>
+          <UsersProvider>
+            <App />
+          </UsersProvider>
+        </AuctionsProvider>
         <ToastContainer autoClose={4000} />
       </AuthProvider>
     </BrowserRouter>

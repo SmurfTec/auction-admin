@@ -18,7 +18,7 @@ import {
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Toolbar)(({ theme }) => ({
-  height: 96,
+  height: 40,
   display: 'flex',
   justifyContent: 'space-between',
   padding: theme.spacing(0, 1, 0, 3)
@@ -34,6 +34,9 @@ const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
   '& fieldset': {
     borderWidth: `1px !important`,
     borderColor: `${theme.palette.grey[500_32]} !important`
+  },
+  '& input': {
+    paddingBlock: 10
   }
 }));
 

@@ -16,7 +16,7 @@ import {
 // ----------------------------------------------------------------------
 
 const APPBAR_MOBILE = 64;
-const APPBAR_DESKTOP = 92;
+const APPBAR_DESKTOP = 60;
 
 const SearchbarStyle = styled('div')(({ theme }) => ({
   top: 0,
