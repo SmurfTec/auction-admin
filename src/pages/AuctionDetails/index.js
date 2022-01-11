@@ -15,6 +15,7 @@ import { AuthContext } from 'contexts/AuthContext';
 import { AuctionsContext } from 'contexts/AuctionsContext';
 import { Navigate } from 'react-router-dom';
 import BidTable from './BidTable';
+import Page from 'components/Page';
 
 const PREFIX = 'AuctionDetails';
 
@@ -179,43 +180,45 @@ const AuctionDetails = () => {
   if (error) return <Navigate to="/" />;
 
   return (
-    <Root>
-      <Container>
-        <section className={classes.containerMargin}>
-          <Typography variant="h4" align="center" fullWidth>
-            Auction Details
-          </Typography>
-        </section>
-        {auction ? (
+    <Page title="Auction Details">
+      <Root>
+        <Container>
           <section className={classes.containerMargin}>
-            <div className={`${classes.flexJustDisp}`}>
-              <div className={`${classes.customStyledBox} ${classes.flexJustDisp}`}>
-                <AuctionStepper auction={auction} />
-                <div className={classes.content}>
-                  <Card auction={auction} handleBookmark={handleBookmark} />
+            <Typography variant="h4" align="center" fullWidth>
+              Auction Details
+            </Typography>
+          </section>
+          {auction ? (
+            <section className={classes.containerMargin}>
+              <div className={`${classes.flexJustDisp}`}>
+                <div className={`${classes.customStyledBox} ${classes.flexJustDisp}`}>
+                  <AuctionStepper auction={auction} />
+                  <div className={classes.content}>
+                    <Card auction={auction} handleBookmark={handleBookmark} />
+                  </div>
                 </div>
               </div>
-            </div>
-            {/* <div className={`${custom.auctDetailCont}`}>
+              {/* <div className={`${custom.auctDetailCont}`}>
               <AuctionStepper auction={auction} />
               <div className={classes.content}>
                 <Card auction={auction} />
               </div>
             </div> */}
 
-            <Box mt={5} className={`${classes.histCard}`}>
-              <Box sx={{ flexBasis: '60%' }} className={`${classes.contentCont}`}>
-                <Typography variant="h5">Bidding Info</Typography>
+              <Box mt={5} className={`${classes.histCard}`}>
+                <Box sx={{ flexBasis: '60%' }} className={`${classes.contentCont}`}>
+                  <Typography variant="h5">Bidding Info</Typography>
 
-                <BidTable classes={classes} bids={auction.bids} />
+                  <BidTable classes={classes} bids={auction.bids} />
+                </Box>
               </Box>
-            </Box>
-          </section>
-        ) : (
-          <Typography variant="subtitle1">Auction Not Found</Typography>
-        )}
-      </Container>
-    </Root>
+            </section>
+          ) : (
+            <Typography variant="subtitle1">Auction Not Found</Typography>
+          )}
+        </Container>
+      </Root>
+    </Page>
   );
 };
 
