@@ -1,5 +1,5 @@
-import plusFill from '@iconify/icons-eva/plus-fill';
 import { filter } from 'lodash';
+import { sentenceCase } from 'change-case';
 import { useContext, useEffect, useState } from 'react';
 // material
 import {
@@ -14,28 +14,27 @@ import {
   Typography,
   TableContainer,
   TablePagination,
-  Skeleton,
-  Button
+  Skeleton
 } from '@mui/material';
 // components
 import Page from '../components/Page';
+import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
+import { AuctionsContext } from 'contexts/AuctionsContext';
+import { Link } from 'react-router-dom';
 //
 // import USERLIST from '../_mocks_/user';
-import { CategoriesContext } from 'contexts/CategoriesContext';
-import { useToggleInput } from 'hooks';
-import ConfirmDelete from 'components/dialogs/ConfirmDelete';
-import { Icon } from '@iconify/react';
-import AddCategory from 'components/category/AddCategory';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'Id', alignRight: false },
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'createdAt', label: 'Creation Date', alignRight: false },
+  { id: 'title', label: 'Title', alignRight: false },
+  { id: 'location', label: 'Location', alignRight: false },
+  { id: 'startingPrice', label: 'Starting Price', alignRight: false },
+  { id: 'type', label: 'Type', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
   { id: '' }
 ];
 
@@ -65,27 +64,20 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.title.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User() {
-  const { categories, loading, deleteCategory, editCategory, createCategory } =
-    useContext(CategoriesContext);
+export default function Auction() {
+  const { auctions, loading } = useContext(AuctionsContext);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [filteredCategories, setFilteredUsers] = useState([]);
-  const [isDeleteOpen, toggleDeleteOpen] = useToggleInput(false);
-  const [deleteItemId, setDeleteItemId] = useState(null);
-
-  const [isAddOpen, toggleAddOpen] = useToggleInput(false);
-  const [isEditOpen, toggleEditOpen] = useToggleInput(false);
-  const [editItem, setEditItem] = useState(null);
+  const [filteredAuctions, setFilteredAuctions] = useState([]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -106,58 +98,28 @@ export default function User() {
     setFilterName(event.target.value);
   };
 
-  const handleDeleteSuccess = (event) => {
-    setDeleteItemId();
-    toggleDeleteOpen();
-
-    deleteCategory(deleteItemId);
-  };
-  const handleEditSuccess = (body) => {
-    toggleEditOpen();
-    console.log(`body`, body);
-    editCategory(editItem?._id, body);
-    setEditItem();
-  };
-  const handleAddSuccess = (body) => {
-    toggleAddOpen();
-
-    createCategory(body);
-  };
-
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - categories.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - auctions.length) : 0;
 
   useEffect(() => {
-    if (loading || !categories) return;
+    console.log('hereeeeeee1');
+    console.log(`loading`, loading);
+    console.log(`auctions`, auctions);
+    if (loading || !auctions) return;
+    console.log('hereeeeeee');
 
-    let newUsers = applySortFilter(categories, getComparator(order, orderBy), filterName);
-    setFilteredUsers(newUsers);
-  }, [categories, loading, order, orderBy, filterName, getComparator]);
+    let newAuctions = applySortFilter(auctions, getComparator(order, orderBy), filterName);
+    setFilteredAuctions(newAuctions);
+  }, [auctions, loading, order, orderBy, filterName, getComparator]);
 
-  const isUserNotFound = filteredCategories.length === 0;
-
-  const handleDelete = (delId) => {
-    setDeleteItemId(delId);
-    setTimeout(() => {
-      toggleDeleteOpen();
-    }, 500);
-  };
-  const handleEdit = (item) => {
-    setEditItem(item);
-    setTimeout(() => {
-      toggleEditOpen();
-    }, 500);
-  };
+  const isUserNotFound = filteredAuctions.length === 0;
 
   return (
-    <Page title="Categories | Auction-App">
+    <Page title="Auction | Auction-App">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           <Typography variant="h4" gutterBottom>
-            Categories
+            Auctions
           </Typography>
-          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={toggleAddOpen}>
-            New Category
-          </Button>
         </Stack>
 
         <Card>
@@ -165,7 +127,7 @@ export default function User() {
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
-            searchSlug="Search Categories"
+            searchSlug="Search Auctions"
           />
 
           <Scrollbar>
@@ -175,7 +137,7 @@ export default function User() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={categories.length}
+                  rowCount={auctions.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                 />
@@ -184,7 +146,7 @@ export default function User() {
                     ? Array(5)
                         .fill()
                         .map((_, idx) => (
-                          <TableRow key={idx} hover>
+                          <TableRow key={idx}>
                             <TableCell>
                               <Skeleton variant="circular" />
                             </TableCell>
@@ -197,39 +159,55 @@ export default function User() {
                               ))}
                           </TableRow>
                         ))
-                    : filteredCategories
+                    : filteredAuctions
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => {
-                          const { _id, name, createdAt } = row;
-                          const isItemSelected = selected.indexOf(name) !== -1;
+                          const { _id, images, location, title, startingPrice, type, status } = row;
 
                           return (
                             <TableRow
                               hover
+                              component={Link}
+                              to={_id}
                               key={_id}
                               tabIndex={-1}
                               role="checkbox"
-                              selected={isItemSelected}
-                              aria-checked={isItemSelected}
+                              sx={(theme) => ({
+                                '&.MuiTableRow-root': {
+                                  cursor: 'pointer',
+                                  textDecoration: 'none'
+                                }
+                              })}
                             >
                               <TableCell padding="checkbox" />
-                              <TableCell align="left">{_id}</TableCell>
                               <TableCell component="th" scope="row" padding="none">
-                                <Typography variant="subtitle2" noWrap>
-                                  {name}
-                                </Typography>
+                                <Stack direction="row" alignItems="center" spacing={2}>
+                                  <Avatar alt={title} src={images?.[0]} />
+                                  <Typography variant="subtitle2" noWrap>
+                                    {title}
+                                  </Typography>
+                                </Stack>
                               </TableCell>
+                              <TableCell align="left">{location}</TableCell>
                               {/* <TableCell align="left">{role}</TableCell> */}
+                              <TableCell align="left">${startingPrice}</TableCell>
+                              <TableCell align="left">{type}</TableCell>
                               <TableCell align="left">
-                                {new Date(createdAt).toLocaleDateString()}
-                              </TableCell>
-
-                              <TableCell align="right">
-                                <UserMoreMenu
-                                  row={row}
-                                  onDelete={handleDelete}
-                                  onEdit={handleEdit}
-                                />
+                                <Label
+                                  variant="ghost"
+                                  color={
+                                    status === 'published'
+                                      ? 'primary'
+                                      : status === 'archieved'
+                                      ? 'error'
+                                      : status === 'unPublished'
+                                      ? 'warning'
+                                      : 'success'
+                                  }
+                                >
+                                  {status}
+                                  {/* {sentenceCase(status)} */}
+                                </Label>
                               </TableCell>
                             </TableRow>
                           );
@@ -256,35 +234,13 @@ export default function User() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={categories.length}
+            count={auctions.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-        <ConfirmDelete
-          open={isDeleteOpen}
-          toggleDialog={toggleDeleteOpen}
-          title="Delete this category"
-          handleSuccess={handleDeleteSuccess}
-        />
-        <AddCategory
-          open={isAddOpen}
-          toggleDialog={toggleAddOpen}
-          title="Create this category"
-          handleSuccess={handleAddSuccess}
-        />
-
-        {/* This will act as update category dialog */}
-        <AddCategory
-          open={isEditOpen}
-          toggleDialog={toggleEditOpen}
-          title="Update this category"
-          handleSuccess={handleEditSuccess}
-          isUpdate
-          editItem={editItem}
-        />
       </Container>
     </Page>
   );

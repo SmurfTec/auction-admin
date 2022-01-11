@@ -11,6 +11,8 @@ const LazyLogoOnlyLayout = React.lazy(() => import('./layouts/LogoOnlyLayout'));
 const LazyLogin = React.lazy(() => import('./pages/Login'));
 const LazyDashboardApp = React.lazy(() => import('./pages/DashboardApp'));
 const LazyUser = React.lazy(() => import('./pages/User'));
+const LazyAuctions = React.lazy(() => import('./pages/Auctions'));
+const LazyAuctionDetails = React.lazy(() => import('./pages/AuctionDetails'));
 const LazyCategories = React.lazy(() => import('./pages/Category'));
 
 export default function Router() {
@@ -42,6 +44,22 @@ export default function Router() {
                 element={
                   <React.Suspense fallback={<Loader />}>
                     <LazyUser />
+                  </React.Suspense>
+                }
+              />
+              <Route
+                path="auctions"
+                element={
+                  <React.Suspense fallback={<Loader />}>
+                    <LazyAuctions />
+                  </React.Suspense>
+                }
+              />
+              <Route
+                path="auctions/:id"
+                element={
+                  <React.Suspense fallback={<Loader />}>
+                    <LazyAuctionDetails />
                   </React.Suspense>
                 }
               />
