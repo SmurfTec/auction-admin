@@ -10,8 +10,6 @@ const LazyLogoOnlyLayout = React.lazy(() => import('./layouts/LogoOnlyLayout'));
 //
 const LazyLogin = React.lazy(() => import('./pages/Login'));
 const LazyDashboardApp = React.lazy(() => import('./pages/DashboardApp'));
-const LazyProducts = React.lazy(() => import('./pages/Products'));
-const LazyBlog = React.lazy(() => import('./pages/Blog'));
 const LazyUser = React.lazy(() => import('./pages/User'));
 const LazyCategories = React.lazy(() => import('./pages/Category'));
 
@@ -52,22 +50,6 @@ export default function Router() {
                 element={
                   <React.Suspense fallback={<Loader />}>
                     <LazyCategories />
-                  </React.Suspense>
-                }
-              />
-              <Route
-                path="products"
-                element={
-                  <React.Suspense fallback={<Loader />}>
-                    <LazyProducts />
-                  </React.Suspense>
-                }
-              />
-              <Route
-                path="blog"
-                element={
-                  <React.Suspense fallback={<Loader />}>
-                    <LazyBlog />
                   </React.Suspense>
                 }
               />

@@ -33,16 +33,6 @@ const sidebarConfig = [
     icon: getIcon(CategoriesFill)
   },
   {
-    title: 'product',
-    path: '/products',
-    icon: getIcon(shoppingBagFill)
-  },
-  {
-    title: 'blog',
-    path: '/blog',
-    icon: getIcon(fileTextFill)
-  },
-  {
     title: 'logout',
     path: '/logout',
     icon: getIcon(logoutFill)
