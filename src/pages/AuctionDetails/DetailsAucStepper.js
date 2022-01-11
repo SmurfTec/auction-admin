@@ -1,11 +1,22 @@
 import React from 'react';
-import { makeStyles, useTheme } from '@mui/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { MobileStepper, Paper, Button, Box } from '@mui/material';
 
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
+const PREFIX = 'DetailsAucStepper';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  header: `${PREFIX}-header`,
+  VideoBox: `${PREFIX}-VideoBox`,
+  img: `${PREFIX}-img`,
+  mobileStepper: `${PREFIX}-mobileStepper`,
+  imgCont: `${PREFIX}-imgCont`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.root}`]: {
     flex: 2,
     display: 'flex',
     flexDirection: 'column',
@@ -16,14 +27,16 @@ const useStyles = makeStyles((theme) => ({
       // maxWidth: 350,
     }
   },
-  header: {
+
+  [`& .${classes.header}`]: {
     display: 'flex',
     alignItems: 'center',
     height: 50,
     paddingLeft: theme.spacing(4),
     backgroundColor: theme.palette.background.default
   },
-  VideoBox: {
+
+  [`& .${classes.VideoBox}`]: {
     height: 170,
     flexGrow: 1,
     [theme.breakpoints.down('sm')]: {
@@ -31,7 +44,8 @@ const useStyles = makeStyles((theme) => ({
       height: 200
     }
   },
-  img: {
+
+  [`& .${classes.img}`]: {
     width: '100%',
     height: 170,
     flexGrow: 1,
@@ -42,14 +56,16 @@ const useStyles = makeStyles((theme) => ({
       height: 200
     }
   },
-  mobileStepper: {
+
+  [`& .${classes.mobileStepper}`]: {
     background: '#fff',
     minHeight: 70,
     [theme.breakpoints.down('sm')]: {
       minHeight: 50
     }
   },
-  imgCont: {
+
+  [`& .${classes.imgCont}`]: {
     backgroundSize: 'contain',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center',
@@ -62,8 +78,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DetailsAucStepper = ({ auction }) => {
-  const classes = useStyles();
-
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
   const [carousel, setCarousel] = React.useState(null);
@@ -93,7 +107,7 @@ const DetailsAucStepper = ({ auction }) => {
   };
 
   return (
-    <>
+    <Root>
       {carousel && (
         <Paper className={`${classes.root}`}>
           {carousel?.[activeStep].type === 'video' ? (
@@ -141,7 +155,7 @@ const DetailsAucStepper = ({ auction }) => {
           />
         </Paper>
       )}
-    </>
+    </Root>
   );
 };
 

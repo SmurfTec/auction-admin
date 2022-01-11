@@ -1,4 +1,5 @@
 import { Box, Container, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { makeStyles } from '@mui/material/styles';
 import React, { useContext, useMemo } from 'react';
 import AuctionStepper from './DetailsAucStepper';
@@ -15,17 +16,29 @@ import { AuctionsContext } from 'contexts/AuctionsContext';
 import { Navigate } from 'react-router-dom';
 import BidTable from './BidTable';
 
-const useStyles = makeStyles((theme) => ({
-  contentCont: {
+const PREFIX = 'AuctionDetails';
+
+const classes = {
+  contentCont: `${PREFIX}-contentCont`,
+  histCard: `${PREFIX}-histCard`,
+  containerMargin: `${PREFIX}-containerMargin`,
+  flexJustDisp: `${PREFIX}-flexJustDisp`,
+  customStyledBox: `${PREFIX}-customStyledBox`,
+  content: `${PREFIX}-content`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.contentCont}`]: {
     boxShadow: 'rgb(4 17 29 / 25%) 0px 0px 10px 0px',
     borderRadius: 12,
     padding: 15,
     backgroundColor: '#fff',
     height: 'fit-content'
   },
-  histCard: {
+
+  [`& .${classes.histCard}`]: {
     display: 'flex',
-    justifyContent: 'end',
+    justifyContent: 'flex-start',
     columnGap: '2em',
 
     [theme.breakpoints.down('sm')]: {
@@ -33,17 +46,22 @@ const useStyles = makeStyles((theme) => ({
       rowGap: '2em'
     }
   },
-  containerMargin: {
+
+  [`& .${classes.containerMargin}`]: {
     marginBlock: theme.spacing(6),
     [theme.breakpoints.down('sm')]: {
       marginBlock: theme.spacing(2)
     }
   },
-  flexJustDisp: {
+
+  // ^ Custom box having box shadow and border
+  [`& .${classes.flexJustDisp}`]: {
     display: 'flex',
     justifyContent: 'center'
-  }, // ^ Custom box having box shadow and border
-  customStyledBox: {
+  },
+
+  // ^ Image Carousel Styles
+  [`& .${classes.customStyledBox}`]: {
     boxShadow: 'rgb(4 17 29 / 25%) 0px 0px 10px 0px',
     // rgb(4 17 29 / 25%) 0px 0px 8px 0px
     // #04111d40
@@ -65,8 +83,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column'
     }
-  }, // ^ Image Carousel Styles
-  content: {
+  },
+
+  [`& .${classes.content}`]: {
     width: '100%',
     // maxWidth: 620,
     display: 'flex',
@@ -93,7 +112,6 @@ const AuctionDetails = () => {
   const { token } = useContext(AuthContext);
   const { addToWatchlist } = useContext(AuctionsContext);
 
-  const classes = useStyles();
   const { id } = useParams();
 
   let {
@@ -161,7 +179,7 @@ const AuctionDetails = () => {
   if (error) return <Navigate to="/" />;
 
   return (
-    <>
+    <Root>
       <Container>
         <section className={classes.containerMargin}>
           <Typography variant="h4" align="center" fullWidth>
@@ -197,7 +215,7 @@ const AuctionDetails = () => {
           <Typography variant="subtitle1">Auction Not Found</Typography>
         )}
       </Container>
-    </>
+    </Root>
   );
 };
 

@@ -1,21 +1,32 @@
 import React, { useMemo } from 'react';
+import { styled } from '@mui/material/styles';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@mui/styles';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { Box, Chip, IconButton } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { calculateCountdown } from 'utils/dateFunctions';
 
-const useStyles = makeStyles((theme) => ({
-  card: {
+const PREFIX = 'DetailCard';
+
+const classes = {
+  card: `${PREFIX}-card`,
+  cardDetails: `${PREFIX}-cardDetails`,
+  cardMedia: `${PREFIX}-cardMedia`,
+  shareBtn: `${PREFIX}-shareBtn`,
+  createdInfo: `${PREFIX}-createdInfo`,
+  cardCategories: `${PREFIX}-cardCategories`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.card}`]: {
     display: 'flex'
     // borderRadius: 8,
     // marginBottom: theme.spacing(2),
   },
-  cardDetails: {
+
+  [`& .${classes.cardDetails}`]: {
     flex: 1,
     position: 'relative',
     '& .MuiCardContent-root': {
@@ -24,23 +35,26 @@ const useStyles = makeStyles((theme) => ({
       }
     }
   },
-  cardMedia: {
+
+  [`& .${classes.cardMedia}`]: {
     width: 160
   },
-  shareBtn: {
+
+  [`& .${classes.shareBtn}`]: {
     position: 'absolute',
     top: 10,
     right: 10
   },
 
-  createdInfo: {
+  [`& .${classes.createdInfo}`]: {
     marginTop: theme.spacing(2),
     display: 'flex',
     justifyContent: 'space-between',
     width: '100%',
     flexWrap: 'wrap'
   },
-  cardCategories: {
+
+  [`& .${classes.cardCategories}`]: {
     flexBasis: '40%',
     flexGrow: 1,
     display: 'flex',
@@ -62,8 +76,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function FeaturedPost({ auction, handleBookmark, bookmaking }) {
-  const classes = useStyles();
-
   const timeLeft = useMemo(() => {
     if (!auction) return;
     let countdown = calculateCountdown(auction.timeLine);
@@ -80,7 +92,7 @@ export default function FeaturedPost({ auction, handleBookmark, bookmaking }) {
   };
 
   return (
-    <>
+    <Root>
       <Card className={classes.card}>
         <div className={classes.cardDetails}>
           <CardContent>
@@ -138,44 +150,10 @@ export default function FeaturedPost({ auction, handleBookmark, bookmaking }) {
                       />
                     ))}
                   </Box>
-                  <IconButton
-                    aria-label="bookmark"
-                    aria-haspopup="true"
-                    data-item={_id}
-                    onClick={handleBookmark}
-                    style={{
-                      marginLeft: 'auto',
-                      color: '#000'
-                    }}
-                    // disabled
-                  >
-                    <VisibilityIcon color="primary" />
-                  </IconButton>
                 </Box>
               </Box>
             </Box>
-            {/* <Box
-              mb={3}
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: 20,
-              }}
-            >
-              <IconButton
-                aria-label='bookmark'
-                aria-haspopup='true'
-                data-item={_id}
-                onClick={handleBookmark}
-                style={{
-                  marginLeft: 'auto',
-                  color: '#000',
-                }}
-              >
-                <VisibilityIcon color='primary' />
-              </IconButton>
-            </Box> */}
+
             <Divider />
             <div className={classes.createdInfo}>
               <Typography variant="body1" color="textSecondary">
@@ -188,7 +166,7 @@ export default function FeaturedPost({ auction, handleBookmark, bookmaking }) {
           </CardContent>
         </div>
       </Card>
-    </>
+    </Root>
   );
 }
 
