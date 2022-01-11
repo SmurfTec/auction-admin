@@ -13,6 +13,7 @@ const LazyDashboardApp = React.lazy(() => import('./pages/DashboardApp'));
 const LazyProducts = React.lazy(() => import('./pages/Products'));
 const LazyBlog = React.lazy(() => import('./pages/Blog'));
 const LazyUser = React.lazy(() => import('./pages/User'));
+const LazyCategories = React.lazy(() => import('./pages/Category'));
 
 export default function Router() {
   const { token, isLoggedin } = useContext(AuthContext);
@@ -43,6 +44,14 @@ export default function Router() {
                 element={
                   <React.Suspense fallback={<Loader />}>
                     <LazyUser />
+                  </React.Suspense>
+                }
+              />
+              <Route
+                path="categories"
+                element={
+                  <React.Suspense fallback={<Loader />}>
+                    <LazyCategories />
                   </React.Suspense>
                 }
               />

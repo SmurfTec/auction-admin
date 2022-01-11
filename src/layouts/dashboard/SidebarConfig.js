@@ -5,6 +5,7 @@ import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
 import fileTextFill from '@iconify/icons-eva/file-text-fill';
 import logoutFill from '@iconify/icons-eva/log-out-fill';
 import AuctionsFill from '@iconify/icons-eva/pantone-fill';
+import CategoriesFill from '@iconify/icons-eva/bar-chart-2-fill';
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +26,11 @@ const sidebarConfig = [
     title: 'auction',
     path: '/auctions',
     icon: getIcon(AuctionsFill)
+  },
+  {
+    title: 'categories',
+    path: '/categories',
+    icon: getIcon(CategoriesFill)
   },
   {
     title: 'product',

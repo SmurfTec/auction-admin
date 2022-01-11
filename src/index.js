@@ -18,6 +18,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuctionsProvider } from 'contexts/AuctionsContext';
 import { UsersProvider } from 'contexts/UsersContext';
+import { CategoriesProvider } from 'contexts/CategoriesContext';
 
 // * ---------------  //
 
@@ -27,7 +28,9 @@ ReactDOM.render(
       <AuthProvider>
         <AuctionsProvider>
           <UsersProvider>
-            <App />
+            <CategoriesProvider>
+              <App />
+            </CategoriesProvider>
           </UsersProvider>
         </AuctionsProvider>
         <ToastContainer autoClose={4000} />

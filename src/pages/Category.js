@@ -1,5 +1,5 @@
+import plusFill from '@iconify/icons-eva/plus-fill';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import { useContext, useEffect, useState } from 'react';
 // material
 import {
@@ -14,25 +14,28 @@ import {
   Typography,
   TableContainer,
   TablePagination,
-  Skeleton
+  Skeleton,
+  Button
 } from '@mui/material';
 // components
 import Page from '../components/Page';
-import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 // import USERLIST from '../_mocks_/user';
-import { UsersContext } from 'contexts/UsersContext';
+import { CategoriesContext } from 'contexts/CategoriesContext';
+import { useToggleInput } from 'hooks';
+import ConfirmDelete from 'components/dialogs/ConfirmDelete';
+import { Icon } from '@iconify/react';
+import AddCategory from 'components/category/AddCategory';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+  { id: 'id', label: 'Id', alignRight: false },
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'email', label: 'Email', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'links', label: 'Social', alignRight: false },
+  { id: 'Creation Date', label: 'Creation Date', alignRight: false },
   { id: '' }
 ];
 
@@ -68,14 +71,21 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function User() {
-  const { users, loading } = useContext(UsersContext);
+  const { categories, loading, deleteCategory, editCategory, createCategory } =
+    useContext(CategoriesContext);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [filteredCategories, setFilteredUsers] = useState([]);
+  const [isDeleteOpen, toggleDeleteOpen] = useToggleInput(false);
+  const [deleteItemId, setDeleteItemId] = useState(null);
+
+  const [isAddOpen, toggleAddOpen] = useToggleInput(false);
+  const [isEditOpen, toggleEditOpen] = useToggleInput(false);
+  const [editItem, setEditItem] = useState(null);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -96,28 +106,58 @@ export default function User() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
+  const handleDeleteSuccess = (event) => {
+    setDeleteItemId();
+    toggleDeleteOpen();
+
+    deleteCategory(deleteItemId);
+  };
+  const handleEditSuccess = (body) => {
+    toggleEditOpen();
+    console.log(`body`, body);
+    editCategory(editItem?._id, body);
+    setEditItem();
+  };
+  const handleAddSuccess = (body) => {
+    toggleAddOpen();
+
+    createCategory(body);
+  };
+
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - categories.length) : 0;
 
   useEffect(() => {
-    console.log('hereeeeeee1');
-    console.log(`loading`, loading);
-    console.log(`users`, users);
-    if (loading || !users) return;
-    console.log('hereeeeeee');
+    if (loading || !categories) return;
 
-    let newUsers = applySortFilter(users, getComparator(order, orderBy), filterName);
+    let newUsers = applySortFilter(categories, getComparator(order, orderBy), filterName);
     setFilteredUsers(newUsers);
-  }, [users, loading, order, orderBy, filterName, getComparator]);
+  }, [categories, loading, order, orderBy, filterName, getComparator]);
 
-  const isUserNotFound = filteredUsers.length === 0;
+  const isUserNotFound = filteredCategories.length === 0;
+
+  const handleDelete = (delId) => {
+    setDeleteItemId(delId);
+    setTimeout(() => {
+      toggleDeleteOpen();
+    }, 500);
+  };
+  const handleEdit = (item) => {
+    setEditItem(item);
+    setTimeout(() => {
+      toggleEditOpen();
+    }, 500);
+  };
 
   return (
-    <Page title="User | Auction-App">
+    <Page title="Categories | Auction-App">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           <Typography variant="h4" gutterBottom>
-            Users
+            Categories
           </Typography>
+          <Button variant="contained" startIcon={<Icon icon={plusFill} />} onClick={toggleAddOpen}>
+            New Category
+          </Button>
         </Stack>
 
         <Card>
@@ -125,7 +165,7 @@ export default function User() {
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
-            searchSlug="Search Users"
+            searchSlug="Search Categories"
           />
 
           <Scrollbar>
@@ -135,7 +175,7 @@ export default function User() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={users.length}
+                  rowCount={categories.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                 />
@@ -157,10 +197,10 @@ export default function User() {
                               ))}
                           </TableRow>
                         ))
-                    : filteredUsers
+                    : filteredCategories
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => {
-                          const { _id, name, email, photo, isVerified } = row;
+                          const { _id, name, createdAt } = row;
                           const isItemSelected = selected.indexOf(name) !== -1;
 
                           return (
@@ -172,34 +212,24 @@ export default function User() {
                               selected={isItemSelected}
                               aria-checked={isItemSelected}
                             >
-                              <TableCell padding="checkbox">
-                                {/* <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, name)}
-                            /> */}
-                              </TableCell>
+                              <TableCell padding="checkbox" />
+                              <TableCell align="left">{_id}</TableCell>
                               <TableCell component="th" scope="row" padding="none">
-                                <Stack direction="row" alignItems="center" spacing={2}>
-                                  <Avatar alt={name} src={photo} />
-                                  <Typography variant="subtitle2" noWrap>
-                                    {name}
-                                  </Typography>
-                                </Stack>
+                                <Typography variant="subtitle2" noWrap>
+                                  {name}
+                                </Typography>
                               </TableCell>
-                              <TableCell align="left">{email}</TableCell>
                               {/* <TableCell align="left">{role}</TableCell> */}
-                              <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-                              {/* <TableCell align="left">
-                                <Label
-                                  variant="ghost"
-                                  color={(status === 'banned' && 'error') || 'success'}
-                                >
-                                  {sentenceCase(status)}
-                                </Label>
-                              </TableCell> */}
+                              <TableCell align="left">
+                                {new Date(createdAt).toLocaleDateString()}
+                              </TableCell>
 
                               <TableCell align="right">
-                                <UserMoreMenu />
+                                <UserMoreMenu
+                                  row={row}
+                                  onDelete={handleDelete}
+                                  onEdit={handleEdit}
+                                />
                               </TableCell>
                             </TableRow>
                           );
@@ -226,13 +256,35 @@ export default function User() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={users.length}
+            count={categories.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
+        <ConfirmDelete
+          open={isDeleteOpen}
+          toggleDialog={toggleDeleteOpen}
+          title="Delete this category"
+          handleSuccess={handleDeleteSuccess}
+        />
+        <AddCategory
+          open={isAddOpen}
+          toggleDialog={toggleAddOpen}
+          title="Create this category"
+          handleSuccess={handleAddSuccess}
+        />
+
+        {/* This will act as update category dialog */}
+        <AddCategory
+          open={isEditOpen}
+          toggleDialog={toggleEditOpen}
+          title="Update this category"
+          handleSuccess={handleEditSuccess}
+          isUpdate
+          editItem={editItem}
+        />
       </Container>
     </Page>
   );
