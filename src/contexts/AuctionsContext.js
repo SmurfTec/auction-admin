@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 export const AuctionsContext = React.createContext();
 
 export const AuctionsProvider = ({ children }) => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedin } = useContext(AuthContext);
   const navigate = useNavigate();
   const [
     auctions,
@@ -34,11 +34,11 @@ export const AuctionsProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedin) return;
 
     // * only fetch if user is logged In
     fetchAuctions();
-  }, [isLoggedIn]);
+  }, [isLoggedin]);
 
   // * CRUD Operations
   const getAuctionById = (id) => auctions.find((el) => el._id === id);

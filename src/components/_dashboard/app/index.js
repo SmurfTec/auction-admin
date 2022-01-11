@@ -1,7 +1,5 @@
-export { default as AppBugReports } from './AppBugReports';
-export { default as AppCurrentVisits } from './AppCurrentVisits';
-export { default as AppItemOrders } from './AppItemOrders';
-export { default as AppNewsUpdate } from './AppNewsUpdate';
-export { default as AppNewUsers } from './AppNewUsers';
+export { default as AppAuctionsPieChart } from './AppAuctionsPieChart';
+export { default as AppItemOrders } from './AppCard';
+export { default as AppNewAuctions } from './AppNewAuctions';
 export { default as AppWebsiteVisits } from './AppWebsiteVisits';
-export { default as AppWeeklySales } from './AppWeeklySales';
+export { default as AppCard } from './AppCard';

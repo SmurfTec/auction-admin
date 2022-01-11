@@ -2,11 +2,13 @@ import { merge } from 'lodash';
 import ReactApexChart from 'react-apexcharts';
 // material
 import { useTheme, styled } from '@mui/material/styles';
-import { Card, CardHeader } from '@mui/material';
+import { Card, CardHeader, Skeleton } from '@mui/material';
 // utils
 import { fNumber } from '../../../utils/formatNumber';
 //
 import { BaseOptionChart } from '../../charts';
+import { useContext, useEffect, useState } from 'react';
+import { AuctionsContext } from 'contexts/AuctionsContext';
 
 // ----------------------------------------------------------------------
 
@@ -31,19 +33,55 @@ const ChartWrapperStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-const CHART_DATA = [4344, 5435, 1443, 4443];
-
-export default function AppCurrentVisits() {
+export default function AppAuctionsPieChart() {
+  const { auctions, loading } = useContext(AuctionsContext);
   const theme = useTheme();
+
+  const [auctionsStats, setAuctionsStats] = useState([0, 0, 0, 0]);
+
+  useEffect(() => {
+    if (loading || !auctions) return;
+
+    let unPublishedAuctions = 0;
+    let publishedAuctions = 0;
+    let claimedAuctions = 0;
+    let archievedAuctions = 0;
+
+    auctions.forEach((auction) => {
+      switch (auction.status) {
+        case 'inProgress':
+          unPublishedAuctions++;
+
+          break;
+        case 'published':
+          publishedAuctions++;
+
+          break;
+        case 'claimed':
+          claimedAuctions++;
+
+          break;
+        case 'archived':
+          archievedAuctions++;
+
+          break;
+
+        default:
+          break;
+      }
+    });
+
+    setAuctionsStats([unPublishedAuctions, publishedAuctions, claimedAuctions, archievedAuctions]);
+  }, [auctions, loading]);
 
   const chartOptions = merge(BaseOptionChart(), {
     colors: [
-      theme.palette.primary.main,
-      theme.palette.info.main,
       theme.palette.warning.main,
+      theme.palette.primary.main,
+      theme.palette.success.main,
       theme.palette.error.main
     ],
-    labels: ['America', 'Asia', 'Europe', 'Africa'],
+    labels: ['UnPublished', 'Published', 'Claimed', 'Archieved'],
     stroke: { colors: [theme.palette.background.paper] },
     legend: { floating: true, horizontalAlign: 'center' },
     dataLabels: { enabled: true, dropShadow: { enabled: false } },
@@ -64,9 +102,18 @@ export default function AppCurrentVisits() {
   return (
     <Card>
       <CardHeader title="Current Visits" />
-      <ChartWrapperStyle dir="ltr">
-        <ReactApexChart type="pie" series={CHART_DATA} options={chartOptions} height={280} />
-      </ChartWrapperStyle>
+      {loading ? (
+        <Skeleton
+          variant="circular"
+          sx={{ margin: 'auto', marginBottom: '2rem' }}
+          height={230}
+          width={225}
+        />
+      ) : (
+        <ChartWrapperStyle dir="ltr">
+          <ReactApexChart type="pie" series={auctionsStats} options={chartOptions} height={280} />
+        </ChartWrapperStyle>
+      )}
     </Card>
   );
 }
