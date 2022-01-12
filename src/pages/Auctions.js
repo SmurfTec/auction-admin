@@ -25,7 +25,6 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 import { AuctionsContext } from 'contexts/AuctionsContext';
 import { Link } from 'react-router-dom';
 //
-// import USERLIST from '../_mocks_/user';
 
 // ----------------------------------------------------------------------
 

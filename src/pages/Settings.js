@@ -57,7 +57,8 @@ export default function Settings() {
 
     setState((st) => ({
       ...st,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email
     }));
   }, [user]);
@@ -75,8 +76,8 @@ export default function Settings() {
         'PATCH'
       );
       console.log(`resData`, resData);
-      setUser(resData.user);
       toast.success('Profile Updated');
+      setUser(resData.user);
     } catch (err) {
       handleCatch(err);
     }
@@ -84,7 +85,7 @@ export default function Settings() {
   const handleUpdatePass = async () => {
     try {
       console.log(`st`, state);
-      const resData = await makeReq(
+      await makeReq(
         '/auth//update-password',
         {
           body: {
@@ -95,6 +96,7 @@ export default function Settings() {
         },
         'PATCH'
       );
+      toast.success('Password Updated');
     } catch (err) {
       handleCatch(err);
     }
@@ -109,16 +111,26 @@ export default function Settings() {
               <Typography variant="h4" textAlign="center" color="textprimary" gutterBottom>
                 Settings
               </Typography>
-              <TextField
-                fullWidth
-                className={classes.Input}
-                variant="outlined"
-                value={state.name}
-                name="name"
-                label="Name"
-                onChange={handleTxtChange}
-                type="text"
-              />
+              <Box display="flex" gap={'20px'}>
+                <TextField
+                  className={classes.Input}
+                  variant="outlined"
+                  value={state.firstName}
+                  name="firstName"
+                  label="First Name"
+                  onChange={handleTxtChange}
+                  type="text"
+                />
+                <TextField
+                  className={classes.Input}
+                  variant="outlined"
+                  value={state.lastName}
+                  name="lastName"
+                  label="Last Name"
+                  onChange={handleTxtChange}
+                  type="text"
+                />
+              </Box>
               <TextField
                 fullWidth
                 className={classes.Input}

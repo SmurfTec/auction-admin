@@ -101,7 +101,7 @@ export default function AppAuctionsPieChart() {
 
   return (
     <Card>
-      <CardHeader title="Current Visits" />
+      <CardHeader title="All Auctions" />
       {loading ? (
         <Skeleton
           variant="circular"

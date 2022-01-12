@@ -1,33 +1,91 @@
 import { merge } from 'lodash';
 import ReactApexChart from 'react-apexcharts';
 // material
-import { Card, CardHeader, Box } from '@mui/material';
+import { Card, CardHeader, Box, Skeleton } from '@mui/material';
 //
 import { BaseOptionChart } from '../../charts';
+import { useContext, useEffect, useState } from 'react';
+import { AuctionsContext } from 'contexts/AuctionsContext';
+import { daysBetween } from 'utils/dateFunctions';
 
 // ----------------------------------------------------------------------
 
 const CHART_DATA = [
   {
-    name: 'Team A',
+    name: 'Completed Auctions',
     type: 'column',
     data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
   },
   {
-    name: 'Team B',
+    name: 'Archieved Auctions',
     type: 'area',
-    data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
-  },
-  {
-    name: 'Team C',
-    type: 'line',
-    data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39]
+    data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
   }
 ];
 
 export default function AppWebsiteVisits() {
+  const { auctions, loading } = useContext(AuctionsContext);
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    if (loading || !auctions) return;
+
+    let completedAuctions = auctions.filter(
+      (el) => el.status === 'claimed' && daysBetween(new Date(el.publishDate), new Date() <= 4 * 30)
+    );
+    let dataCompletedAuctions = [];
+    dataCompletedAuctions[0] = completedAuctions.filter((el) =>
+      daysBetween(new Date(el.publishDate) <= 30)
+    ).length;
+    dataCompletedAuctions[1] = completedAuctions.filter(
+      (el) =>
+        daysBetween(new Date(el.publishDate) <= 60) && daysBetween(new Date(el.publishDate) > 30)
+    ).length;
+    dataCompletedAuctions[2] = completedAuctions.filter(
+      (el) =>
+        daysBetween(new Date(el.publishDate) <= 90) && daysBetween(new Date(el.publishDate) > 60)
+    ).length;
+    dataCompletedAuctions[3] = completedAuctions.filter(
+      (el) =>
+        daysBetween(new Date(el.publishDate) <= 120) && daysBetween(new Date(el.publishDate) > 90)
+    ).length;
+
+    let archievedAuctions = auctions.filter(
+      (el) => el.status === 'claimed' && daysBetween(new Date(el.publishDate), new Date() <= 4 * 30)
+    );
+    let dataArchievedAuctions = [];
+    dataArchievedAuctions[0] = archievedAuctions.filter((el) =>
+      daysBetween(new Date(el.publishDate) <= 30)
+    ).length;
+    dataArchievedAuctions[1] = archievedAuctions.filter(
+      (el) =>
+        daysBetween(new Date(el.publishDate) <= 60) && daysBetween(new Date(el.publishDate) > 30)
+    ).length;
+    dataArchievedAuctions[2] = archievedAuctions.filter(
+      (el) =>
+        daysBetween(new Date(el.publishDate) <= 90) && daysBetween(new Date(el.publishDate) > 60)
+    ).length;
+    dataArchievedAuctions[3] = archievedAuctions.filter(
+      (el) =>
+        daysBetween(new Date(el.publishDate) <= 120) && daysBetween(new Date(el.publishDate) > 90)
+    ).length;
+
+    setChartData([
+      {
+        name: 'Completed Auctions',
+        type: 'column',
+        data: dataCompletedAuctions
+      },
+      {
+        name: 'Archieved Auctions',
+        type: 'area',
+        data: dataArchievedAuctions
+      }
+    ]);
+  }, [auctions, loading]);
+
   const chartOptions = merge(BaseOptionChart(), {
-    stroke: { width: [0, 2, 3] },
+    stroke: { width: [2, 2, 3] },
     plotOptions: { bar: { columnWidth: '11%', borderRadius: 4 } },
     fill: { type: ['solid', 'gradient', 'solid'] },
     labels: [
@@ -60,9 +118,13 @@ export default function AppWebsiteVisits() {
 
   return (
     <Card>
-      <CardHeader title="Website Visits" subheader="(+43%) than last year" />
+      <CardHeader title="Auctions" subheader="Since Last 4 months" />
       <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-        <ReactApexChart type="line" series={CHART_DATA} options={chartOptions} height={364} />
+        {loading && !chartData ? (
+          <Skeleton variant="rectangular" />
+        ) : (
+          <ReactApexChart type="line" series={chartData} options={chartOptions} height={364} />
+        )}
       </Box>
     </Card>
   );

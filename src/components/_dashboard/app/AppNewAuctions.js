@@ -70,7 +70,7 @@ export default function AppNewAuctions() {
           {loading || !auctions
             ? Array(5)
                 .fill()
-                .map((_, idx) => <Skeleton variant="rectangular" height={50} />)
+                .map((_, idx) => <Skeleton key={idx} variant="rectangular" height={50} />)
             : auctions
                 .filter((el) => el.status === 'claimed')
                 .slice(0, 5)
