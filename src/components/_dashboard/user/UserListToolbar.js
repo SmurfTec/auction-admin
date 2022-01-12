@@ -48,7 +48,14 @@ UserListToolbar.propTypes = {
   onFilterName: PropTypes.func
 };
 
-export default function UserListToolbar({ numSelected, filterName, onFilterName, searchSlug }) {
+export default function UserListToolbar({
+  filterPopoverId,
+  numSelected,
+  filterName,
+  onFilterName,
+  searchSlug,
+  handleClick
+}) {
   return (
     <RootStyle
       sx={{
@@ -83,7 +90,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
-          <IconButton>
+          <IconButton aria-describedby={filterPopoverId} onClick={handleClick}>
             <Icon icon={roundFilterList} />
           </IconButton>
         </Tooltip>

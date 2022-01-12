@@ -14,7 +14,8 @@ import {
   Typography,
   TableContainer,
   TablePagination,
-  Skeleton
+  Skeleton,
+  Popover
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -24,7 +25,9 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 import { AuctionsContext } from 'contexts/AuctionsContext';
 import { Link } from 'react-router-dom';
+import AuctionsFilters from './AuctionsFilters';
 //
+const filterPopoverId = 'filterPopOver';
 
 // ----------------------------------------------------------------------
 
@@ -77,6 +80,17 @@ export default function Auction() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [filteredAuctions, setFilteredAuctions] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const isFilterOpen = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    console.log(`event`, event);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -112,6 +126,100 @@ export default function Auction() {
 
   const isUserNotFound = filteredAuctions.length === 0;
 
+  const applyCategoryFilter = (e) => {
+    const { catid } = e.currentTarget.dataset;
+
+    console.log(`catid`, catid);
+    setFilteredAuctions(
+      auctions?.filter((el) => el.categories.find((st) => st._id.includes(catid)))
+    );
+  };
+  const applyPriceFilter = (pricesLevels) => {
+    // * level 1 => 5k +
+    // let auctions = user?.role === 'buyer' ? usersRequests : devRequests;
+
+    console.log(`auctions`, auctions);
+    let updatedData = [];
+    console.log(`pricesLevels`, pricesLevels);
+
+    if (!pricesLevels.length) updatedData = auctions;
+    else
+      pricesLevels.forEach((el) => {
+        switch (el) {
+          case 'level1':
+            updatedData = auctions.filter((el) => el.startingPrice >= 1000);
+            break;
+
+          case 'level2':
+            updatedData = auctions.filter(
+              (el) => el.startingPrice >= 500 && el.startingPrice < 1000
+            );
+
+            break;
+
+          case 'level3':
+            updatedData = auctions.filter(
+              (el) => el.startingPrice >= 100 && el.startingPrice < 500
+            );
+            break;
+
+          case 'level4':
+            updatedData = auctions.filter((el) => el.startingPrice >= 50 && el.startingPrice < 100);
+            break;
+
+          case 'level5': {
+            updatedData = auctions.filter((el) => el.startingPrice < 50);
+            break;
+          }
+        }
+      });
+
+    updatedData = [...new Set(updatedData)];
+    console.log(
+      `updatedData.map()`,
+      updatedData.map((el) => el.startingPrice)
+    );
+
+    setFilteredAuctions(updatedData);
+  };
+
+  const applyStatusFilter = (daysLevels) => {
+    // * level 1 => Claimed
+    let updatedData = [];
+
+    if (!daysLevels.length) updatedData = auctions;
+    else
+      daysLevels.forEach((el) => {
+        updatedData = auctions.filter((st) => st.status === el);
+      });
+
+    updatedData = [...new Set(updatedData)];
+    console.log(
+      `updatedData.map()`,
+      updatedData.map((el) => el.expectedDays)
+    );
+
+    setFilteredAuctions(updatedData);
+  };
+  const applyTypeFilters = (filter) => {
+    console.log(`filter`, filter);
+    // * level 1 => Claimed
+    let updatedData = [];
+
+    if (!filter.length) updatedData = auctions;
+    else
+      filter.forEach((el) => {
+        updatedData = auctions.filter((st) => st.type === el);
+      });
+
+    updatedData = [...new Set(updatedData)];
+    console.log(
+      `updatedData.map()`,
+      updatedData.map((el) => el.expectedDays)
+    );
+
+    setFilteredAuctions(updatedData);
+  };
   return (
     <Page title="Auction | Auction-App">
       <Container>
@@ -127,7 +235,36 @@ export default function Auction() {
             filterName={filterName}
             onFilterName={handleFilterByName}
             searchSlug="Search Auctions"
+            filterPopoverId={filterPopoverId}
+            handleClick={handleClick}
+            handleClose={handleClose}
           />
+          <Popover
+            id={filterPopoverId}
+            open={isFilterOpen}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center'
+            }}
+            PaperProps={{
+              style: {
+                width: 600
+              }
+            }}
+          >
+            <AuctionsFilters
+              applyPriceFilter={applyPriceFilter}
+              applyCategoryFilter={applyCategoryFilter}
+              applyStatusFilter={applyStatusFilter}
+              applyTypeFilters={applyTypeFilters}
+            />
+          </Popover>
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>

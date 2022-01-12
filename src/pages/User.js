@@ -24,6 +24,8 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import { UsersContext } from 'contexts/UsersContext';
+import { useToggleInput } from 'hooks';
+import UserDetails from './UserDetails';
 
 // ----------------------------------------------------------------------
 
@@ -75,6 +77,9 @@ export default function User() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [filteredUsers, setFilteredUsers] = useState([]);
+
+  const [isDetailsOpen, toggleDetails] = useToggleInput(false);
+  const [detailsUser, setDetailsUser] = useState();
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -164,12 +169,23 @@ export default function User() {
 
                           return (
                             <TableRow
+                              onClick={() => {
+                                console.log('hasda');
+                                setDetailsUser(row);
+                                toggleDetails();
+                              }}
                               hover
                               key={_id}
                               tabIndex={-1}
                               role="checkbox"
                               selected={isItemSelected}
                               aria-checked={isItemSelected}
+                              sx={(theme) => ({
+                                '&.MuiTableRow-root': {
+                                  cursor: 'pointer',
+                                  textDecoration: 'none'
+                                }
+                              })}
                             >
                               <TableCell padding="checkbox">
                                 {/* <Checkbox
@@ -231,6 +247,7 @@ export default function User() {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
+          <UserDetails open={isDetailsOpen} toggleDialog={toggleDetails} user={detailsUser} />
         </Card>
       </Container>
     </Page>
