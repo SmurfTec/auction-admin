@@ -33,6 +33,11 @@ const sidebarConfig = [
     icon: getIcon(CategoriesFill)
   },
   {
+    title: 'contacts',
+    path: '/contacts',
+    icon: getIcon(CategoriesFill)
+  },
+  {
     title: 'logout',
     path: '/logout',
     icon: getIcon(logoutFill)

@@ -21,6 +21,20 @@ export const UsersProvider = ({ children }) => {
   ] = useArray([], '_id');
   const [loading, toggleLoading] = useToggleInput(true);
 
+  const [loadingContacts, toggleLoadingContacts] = useToggleInput(true);
+  const [contacts, setContacts] = useState([]);
+
+  const fetchContacts = async () => {
+    try {
+      const resData = await makeReq('/contacts');
+      // console.log(`resData`, resData);
+      setContacts(resData.contacts);
+    } catch (err) {
+      // console.log(`err`, err)
+    } finally {
+      toggleLoadingContacts();
+    }
+  };
   const fetchUsers = async () => {
     try {
       const resData = await makeReq('/users');
@@ -39,6 +53,7 @@ export const UsersProvider = ({ children }) => {
 
     // * only fetch if user is logged In
     fetchUsers();
+    fetchContacts();
   }, [isLoggedin]);
 
   // * CRUD Operations
@@ -50,7 +65,9 @@ export const UsersProvider = ({ children }) => {
       value={{
         users,
         loading,
-        getUserById
+        getUserById,
+        loadingContacts,
+        contacts
       }}
     >
       {children}
