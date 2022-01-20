@@ -15,7 +15,8 @@ import {
   TableContainer,
   TablePagination,
   Skeleton,
-  Popover
+  Popover,
+  IconButton
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -24,8 +25,12 @@ import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 import { AuctionsContext } from 'contexts/AuctionsContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuctionsFilters from './AuctionsFilters';
+import { Icon } from '@iconify/react';
+import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import ConfirmDelete from 'components/dialogs/ConfirmDelete';
+import { useToggleInput } from 'hooks';
 //
 const filterPopoverId = 'filterPopOver';
 
@@ -37,7 +42,7 @@ const TABLE_HEAD = [
   { id: 'startingPrice', label: 'Starting Price', alignRight: false },
   { id: 'type', label: 'Type', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
-  { id: '' }
+  { id: 'Actions', label: 'Actions', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -72,7 +77,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function Auction() {
-  const { auctions, loading } = useContext(AuctionsContext);
+  const { auctions, loading, deleteAuction } = useContext(AuctionsContext);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -82,6 +87,24 @@ export default function Auction() {
   const [filteredAuctions, setFilteredAuctions] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const isFilterOpen = Boolean(anchorEl);
+
+  const [isDeleteOpen, toggleDeleteOpen] = useToggleInput(false);
+  const [currentDeleteId, setCurrentDeleteId] = useState();
+
+  const navigate = useNavigate();
+
+  const handleDeleteButton = (e) => {
+    e.stopPropagation();
+    const { id } = e.currentTarget.dataset;
+    console.log('id', id);
+    setCurrentDeleteId(id);
+    toggleDeleteOpen();
+  };
+
+  const handleDeleteAuction = () => {
+    deleteAuction(currentDeleteId);
+    toggleDeleteOpen();
+  };
 
   const handleClick = (event) => {
     console.log(`event`, event);
@@ -220,6 +243,13 @@ export default function Auction() {
 
     setFilteredAuctions(updatedData);
   };
+
+  const handleRowClick = (e) => {
+    const { id } = e.currentTarget.dataset;
+    console.log('id', id);
+    navigate(id);
+  };
+
   return (
     <Page title="Auction | Auction-App">
       <Container>
@@ -303,8 +333,10 @@ export default function Auction() {
                           return (
                             <TableRow
                               hover
-                              component={Link}
-                              to={_id}
+                              data-id={_id}
+                              // component={Link}
+                              // to={_id}
+                              onClick={handleRowClick}
                               key={_id}
                               tabIndex={-1}
                               role="checkbox"
@@ -345,6 +377,16 @@ export default function Auction() {
                                   {/* {sentenceCase(status)} */}
                                 </Label>
                               </TableCell>
+                              <TableCell align="left">
+                                {/* <UserMoreMenu /> */}
+                                <IconButton
+                                  color="error"
+                                  onClick={handleDeleteButton}
+                                  data-id={row._id}
+                                >
+                                  <Icon icon={trash2Outline} width={24} height={24} />
+                                </IconButton>
+                              </TableCell>
                             </TableRow>
                           );
                         })}
@@ -375,6 +417,12 @@ export default function Auction() {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+          <ConfirmDelete
+            open={isDeleteOpen}
+            toggleDialog={toggleDeleteOpen}
+            title="Delete This Auction"
+            handleSuccess={handleDeleteAuction}
           />
         </Card>
       </Container>

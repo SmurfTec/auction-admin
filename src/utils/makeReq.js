@@ -2,14 +2,14 @@ import { LOCALSTORAGE_TOKEN_KEY } from 'contexts/AuthContext';
 import { toast } from 'react-toastify';
 
 // * Development URLs
-// const API_BASE_URL = `http://localhost:7000/api`;
-// const API_BASE_ORIGIN = `http://localhost:7000`;
+const API_BASE_URL = `http://localhost:5000/api`;
+const API_BASE_ORIGIN = `http://localhost:5000`;
 // const API_BASE_URL = `https://c9c6-119-73-118-95.ngrok.io/api`;
 // const API_BASE_ORIGIN = `https://c9c6-119-73-118-95.ngrok.io`;
 
 // * Production URLs
-const API_BASE_URL = `https://auction-api1.herokuapp.com/api`;
-const API_BASE_ORIGIN = `https://auction-api1.herokuapp.com`;
+// const API_BASE_URL = `https://auction-api1.herokuapp.com/api`;
+// const API_BASE_ORIGIN = `https://auction-api1.herokuapp.com`;
 
 const handleCatch = (err) => {
   let errMsg = 'Something Went Wrong';

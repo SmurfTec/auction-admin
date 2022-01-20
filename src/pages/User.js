@@ -14,7 +14,9 @@ import {
   Typography,
   TableContainer,
   TablePagination,
-  Skeleton
+  Skeleton,
+  IconButton,
+  Popover
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -26,6 +28,10 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 import { UsersContext } from 'contexts/UsersContext';
 import { useToggleInput } from 'hooks';
 import UserDetails from './UserDetails';
+import { Icon } from '@iconify/react';
+import trash2Outline from '@iconify/icons-eva/trash-2-outline';
+import ConfirmDelete from 'components/dialogs/ConfirmDelete';
+import UsersFilters from './UserFilters';
 
 // ----------------------------------------------------------------------
 
@@ -34,7 +40,7 @@ const TABLE_HEAD = [
   { id: 'email', label: 'Email', alignRight: false },
   { id: 'isVerified', label: 'Verified', alignRight: false },
   { id: 'links', label: 'Social', alignRight: false },
-  { id: '' }
+  { id: 'Actions', label: 'Actions', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -68,11 +74,12 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+const filterPopoverId = 'UserfilterPopOver';
+
 export default function User() {
-  const { users, loading } = useContext(UsersContext);
+  const { users, loading, deleteUser } = useContext(UsersContext);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-  const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -80,6 +87,24 @@ export default function User() {
 
   const [isDetailsOpen, toggleDetails] = useToggleInput(false);
   const [detailsUser, setDetailsUser] = useState();
+
+  const [isDeleteOpen, toggleDeleteOpen] = useToggleInput(false);
+  const [currentDeleteId, setCurrentDeleteId] = useState();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const isFilterOpen = Boolean(anchorEl);
+
+  const handleDeleteButton = (e) => {
+    e.stopPropagation();
+    const { id } = e.currentTarget.dataset;
+    console.log('id', id);
+    setCurrentDeleteId(id);
+    toggleDeleteOpen();
+  };
+
+  const handleDeleteUser = () => {
+    deleteUser(currentDeleteId);
+    toggleDeleteOpen();
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -115,6 +140,22 @@ export default function User() {
 
   const isUserNotFound = filteredUsers.length === 0;
 
+  const handleClick = (event) => {
+    console.log(`event`, event);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleApplyFilter = (val) => {
+    console.log('val', val);
+    if (val === 'all') setFilteredUsers(users);
+    else if (val === 'verified') setFilteredUsers(users?.filter((el) => el.status === 'verified'));
+    else setFilteredUsers(users.filter((el) => el.status !== 'verified'));
+  };
+
   return (
     <Page title="User | Auction-App">
       <Container>
@@ -126,12 +167,35 @@ export default function User() {
 
         <Card>
           <UserListToolbar
-            numSelected={selected.length}
+            numSelected={0}
             filterName={filterName}
             onFilterName={handleFilterByName}
             searchSlug="Search Users"
+            filterPopoverId={filterPopoverId}
+            handleClick={handleClick}
+            handleClose={handleClose}
           />
-
+          <Popover
+            id={filterPopoverId}
+            open={isFilterOpen}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center'
+            }}
+            PaperProps={{
+              style: {
+                width: 200
+              }
+            }}
+          >
+            <UsersFilters applyFilter={handleApplyFilter} />
+          </Popover>
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -140,7 +204,7 @@ export default function User() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={users.length}
-                  numSelected={selected.length}
+                  numSelected={0}
                   onRequestSort={handleRequestSort}
                 />
                 <TableBody>
@@ -165,7 +229,6 @@ export default function User() {
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => {
                           const { _id, name, email, photo, isVerified } = row;
-                          const isItemSelected = selected.indexOf(name) !== -1;
 
                           return (
                             <TableRow
@@ -178,8 +241,6 @@ export default function User() {
                               key={_id}
                               tabIndex={-1}
                               role="checkbox"
-                              selected={isItemSelected}
-                              aria-checked={isItemSelected}
                               sx={(theme) => ({
                                 '&.MuiTableRow-root': {
                                   cursor: 'pointer',
@@ -212,9 +273,17 @@ export default function User() {
                                   {sentenceCase(status)}
                                 </Label>
                               </TableCell> */}
+                              <TableCell></TableCell>
 
-                              <TableCell align="right">
-                                <UserMoreMenu />
+                              <TableCell align="left">
+                                {/* <UserMoreMenu /> */}
+                                <IconButton
+                                  color="error"
+                                  onClick={handleDeleteButton}
+                                  data-id={row._id}
+                                >
+                                  <Icon icon={trash2Outline} width={24} height={24} />
+                                </IconButton>
                               </TableCell>
                             </TableRow>
                           );
@@ -248,6 +317,12 @@ export default function User() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
           <UserDetails open={isDetailsOpen} toggleDialog={toggleDetails} user={detailsUser} />
+          <ConfirmDelete
+            open={isDeleteOpen}
+            toggleDialog={toggleDeleteOpen}
+            title="Delete This User"
+            handleSuccess={handleDeleteUser}
+          />
         </Card>
       </Container>
     </Page>

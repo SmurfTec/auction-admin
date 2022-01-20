@@ -42,7 +42,7 @@ export default function LoginForm() {
       formik.setSubmitting(true);
       (async () => {
         try {
-          const res = await axios.post(`${API_BASE_URL}/auth/login/admin`, {
+          const res = await axios.post(`${API_BASE_URL}/auth/login`, {
             email: formik.values.email,
             password: formik.values.password
           });

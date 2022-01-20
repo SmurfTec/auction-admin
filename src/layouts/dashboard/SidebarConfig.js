@@ -1,12 +1,11 @@
 import { Icon } from '@iconify/react';
 import pieChart2Fill from '@iconify/icons-eva/pie-chart-2-fill';
 import peopleFill from '@iconify/icons-eva/people-fill';
-import shoppingBagFill from '@iconify/icons-eva/shopping-bag-fill';
-import fileTextFill from '@iconify/icons-eva/file-text-fill';
 import logoutFill from '@iconify/icons-eva/log-out-fill';
+import otherFill from '@iconify/icons-eva/options-2-fill';
 import AuctionsFill from '@iconify/icons-eva/pantone-fill';
 import CategoriesFill from '@iconify/icons-eva/bar-chart-2-fill';
-
+import contactFill from '@iconify/icons-eva/message-circle-outline';
 // ----------------------------------------------------------------------
 
 const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
@@ -35,7 +34,12 @@ const sidebarConfig = [
   {
     title: 'contacts',
     path: '/contacts',
-    icon: getIcon(CategoriesFill)
+    icon: getIcon(contactFill)
+  },
+  {
+    title: 'others',
+    path: '/others',
+    icon: getIcon(otherFill)
   },
   {
     title: 'logout',

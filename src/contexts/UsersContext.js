@@ -13,10 +13,10 @@ export const UsersProvider = ({ children }) => {
   const [
     users,
     setUsers,
-    pushUser
-    // filterUsers,
-    // updateUser,
-    // removeUser,
+    pushUser,
+    filterUsers,
+    updateUser,
+    removeUser
     // clearUsers,
   ] = useArray([], '_id');
   const [loading, toggleLoading] = useToggleInput(true);
@@ -59,6 +59,13 @@ export const UsersProvider = ({ children }) => {
   // * CRUD Operations
   const getUserById = (id) => users.find((el) => el._id === id);
 
+  const deleteUser = async (id) => {
+    await makeReq(`/users/${id}`);
+
+    toast.success('User Deleted Successfully!', {}, 'DELETE');
+    removeUser(id);
+  };
+
   return (
     <UsersContext.Provider
       displayName="Users Context"
@@ -67,7 +74,8 @@ export const UsersProvider = ({ children }) => {
         loading,
         getUserById,
         loadingContacts,
-        contacts
+        contacts,
+        deleteUser
       }}
     >
       {children}

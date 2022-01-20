@@ -13,10 +13,10 @@ export const AuctionsProvider = ({ children }) => {
   const [
     auctions,
     setAuctions,
-    pushAuction
-    // filterAuctions,
-    // updateAuction,
-    // removeAuction,
+    pushAuction,
+    filterAuctions,
+    updateAuction,
+    removeAuction
     // clearAuctions,
   ] = useArray([], '_id');
   const [loading, toggleLoading] = useToggleInput(true);
@@ -43,13 +43,21 @@ export const AuctionsProvider = ({ children }) => {
   // * CRUD Operations
   const getAuctionById = (id) => auctions.find((el) => el._id === id);
 
+  const deleteAuction = async (id) => {
+    await makeReq(`/auctions/${id}`, {}, 'DELETE');
+
+    toast.success('Auction Deleted Successfully!');
+    removeAuction(id);
+  };
+
   return (
     <AuctionsContext.Provider
       displayName="Auctions Context"
       value={{
         auctions,
         loading,
-        getAuctionById
+        getAuctionById,
+        deleteAuction
       }}
     >
       {children}

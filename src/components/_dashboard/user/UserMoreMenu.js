@@ -14,6 +14,7 @@ export default function UserMoreMenu({ onDelete, onEdit, row }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = (e) => {
+    e.stopPropagation();
     onDelete(row._id);
   };
   const handleEdit = (e) => {
@@ -22,14 +23,23 @@ export default function UserMoreMenu({ onDelete, onEdit, row }) {
 
   return (
     <>
-      <IconButton ref={ref} onClick={() => setIsOpen(true)}>
+      <IconButton
+        ref={ref}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(true);
+        }}
+      >
         <Icon icon={moreVerticalFill} width={20} height={20} />
       </IconButton>
 
       <Menu
         open={isOpen}
         anchorEl={ref.current}
-        onClose={() => setIsOpen(false)}
+        onClose={(e) => {
+          e.stopPropagation();
+          setIsOpen(false);
+        }}
         PaperProps={{
           sx: { width: 200, maxWidth: '100%' }
         }}
@@ -43,7 +53,7 @@ export default function UserMoreMenu({ onDelete, onEdit, row }) {
           <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem
+        {/* <MenuItem
           component={RouterLink}
           to="#"
           sx={{ color: 'text.secondary' }}
@@ -53,7 +63,7 @@ export default function UserMoreMenu({ onDelete, onEdit, row }) {
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
     </>
   );
