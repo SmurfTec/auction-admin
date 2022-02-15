@@ -1,5 +1,5 @@
 import React from 'react';
-import { PointSpreadLoading } from 'react-loadingg';
+import { JumpCircleLoading } from 'react-loadingg';
 import { Box, Typography, useTheme } from '@mui/material';
 
 const Loading = ({ noTitle }) => {
@@ -23,7 +23,7 @@ const Loading = ({ noTitle }) => {
           </Typography>
         )}
       </Box>
-      <PointSpreadLoading color={theme.palette.primary.main} />
+      <JumpCircleLoading color={theme.palette.primary.main} />
     </Box>
   );
 };

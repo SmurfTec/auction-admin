@@ -36,11 +36,11 @@ const sidebarConfig = [
     path: '/contacts',
     icon: getIcon(contactFill)
   },
-  {
-    title: 'others',
-    path: '/others',
-    icon: getIcon(otherFill)
-  },
+  // {
+  //   title: 'others',
+  //   path: '/others',
+  //   icon: getIcon(otherFill)
+  // },
   {
     title: 'logout',
     path: '/logout',

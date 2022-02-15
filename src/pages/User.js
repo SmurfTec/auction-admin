@@ -32,7 +32,8 @@ import { Icon } from '@iconify/react';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import ConfirmDelete from 'components/dialogs/ConfirmDelete';
 import UsersFilters from './UserFilters';
-
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -228,7 +229,15 @@ export default function User() {
                     : filteredUsers
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row) => {
-                          const { _id, name, email, photo, isVerified } = row;
+                          const {
+                            _id,
+                            name,
+                            email,
+                            photo,
+                            isVerified,
+                            twitterProfile,
+                            instagramProfile
+                          } = row;
 
                           return (
                             <TableRow
@@ -273,7 +282,28 @@ export default function User() {
                                   {sentenceCase(status)}
                                 </Label>
                               </TableCell> */}
-                              <TableCell></TableCell>
+                              <TableCell>
+                                {twitterProfile && (
+                                  <TwitterIcon
+                                    style={{ cursor: 'pointer' }}
+                                    color="secondary"
+                                    onClick={() => {
+                                      window.open(
+                                        `http://www.twitter.com/${twitterProfile.username}`
+                                      );
+                                    }}
+                                  />
+                                )}
+                                {instagramProfile && (
+                                  <InstagramIcon
+                                    style={{ cursor: 'pointer' }}
+                                    color="secondary"
+                                    onClick={() => {
+                                      window.open(instagramProfile);
+                                    }}
+                                  />
+                                )}
+                              </TableCell>
 
                               <TableCell align="left">
                                 {/* <UserMoreMenu /> */}

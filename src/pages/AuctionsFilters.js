@@ -98,7 +98,8 @@ const AuctionsFilters = ({
 
   const [statusFilters, setStatusFiler] = useState({
     claimed: false,
-    archieved: false,
+    claimAble: false,
+    unClaimed: false,
     inProgress: false,
     published: false
   });
@@ -317,12 +318,23 @@ const AuctionsFilters = ({
                   control={
                     <Checkbox
                       color="primary"
-                      checked={statusFilters.archieved}
+                      checked={statusFilters.unClaimed}
                       onChange={handleDaysChange}
-                      name="archieved"
+                      name="unClaimed"
                     />
                   }
-                  label="Archieved"
+                  label="UnClaimed"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      color="primary"
+                      checked={statusFilters.archived}
+                      onChange={handleDaysChange}
+                      name="archived"
+                    />
+                  }
+                  label="Claimable"
                 />
                 <FormControlLabel
                   control={
