@@ -66,6 +66,14 @@ export const UsersProvider = ({ children }) => {
     removeUser(id);
   };
 
+  const updateAUser = async (id, payload) => {
+    const resData = await makeReq(`/users/${id}`, { body: { ...payload } }, 'PATCH');
+
+    toast.success('User Updated Successfully!', {}, 'DELETE');
+
+    updateUser(id, resData.user);
+  };
+
   return (
     <UsersContext.Provider
       displayName="Users Context"
@@ -75,7 +83,8 @@ export const UsersProvider = ({ children }) => {
         getUserById,
         loadingContacts,
         contacts,
-        deleteUser
+        deleteUser,
+        updateAUser
       }}
     >
       {children}
