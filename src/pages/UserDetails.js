@@ -19,12 +19,14 @@ const UserDetailsDialog = ({ user = {}, open, toggleDialog }) => {
     updateAUser(user._id, {
       isVerified: true
     });
+    toggleDialog();
   };
 
   const unVerifyUser = () => {
     updateAUser(user._id, {
       isVerified: false
     });
+    toggleDialog();
   };
 
   return (

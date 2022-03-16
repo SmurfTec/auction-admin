@@ -8,8 +8,8 @@ import { toast } from 'react-toastify';
 // const API_BASE_ORIGIN = `https://c9c6-119-73-118-95.ngrok.io`;
 
 // * Production URLs
-const API_BASE_URL = `https://auction-api1.herokuapp.com/api`;
-const API_BASE_ORIGIN = `https://auction-api1.herokuapp.com`;
+const API_BASE_URL = `https://lotpot.io:5000/api`;
+const API_BASE_ORIGIN = `https://lotpot.io:5000`;
 
 const handleCatch = (err) => {
   let errMsg = 'Something Went Wrong';
